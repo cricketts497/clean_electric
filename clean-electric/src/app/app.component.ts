@@ -23,28 +23,28 @@ export class AppComponent {
   selectedDuration: number;
 
   endTimeControl = new FormControl('', { validators: Validators.required });
-  selectedEndTimeString: string;
-  selectedEndTime: Date;
+  selectedDeadlineString: string;
+  selectedDeadline: Date;
 
   constructor(private carbonMinimizeService: CarbonMinimizeService) {
     this.selectedDurationString = this.durationOptions[0];
     this.selectedDuration = this.durationMap.get(this.selectedDurationString) ?? 60;
 
-    this.selectedEndTime = new Date();
-    this.selectedEndTimeString = this.selectedEndTime.toISOString();
+    this.selectedDeadline = new Date();
+    this.selectedDeadlineString = this.selectedDeadline.toISOString();
   }
 
   onSelectedDurationChange(): void {
     this.selectedDuration = this.durationMap.get(this.selectedDurationString) ?? 60;
   }
 
-  onSelectedEndTimeChange(): void {
-    this.selectedEndTime = new Date(Date.parse(this.selectedEndTimeString));
+  onSelectedDeadlineChange(): void {
+    this.selectedDeadline = new Date(Date.parse(this.selectedDeadlineString));
     this.getPeriod();
   }
 
   private getPeriod(): void {
-    this.carbonMinimizeService.getPeriod(this.selectedDuration, this.selectedEndTime).subscribe((intensityPeriod) => {
+    this.carbonMinimizeService.getPeriod(this.selectedDuration, this.selectedDeadline).subscribe((intensityPeriod) => {
       console.log(intensityPeriod);
     });
   }

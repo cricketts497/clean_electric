@@ -19,34 +19,35 @@ export class CarbonMinimizeService {
     );
   }
 
-  // duration is number of periods
-  private getDateRange(data: IntensityData, numberOfPeriods: number, deadline: Date): IntensityPeriod {
-    const periodsEndingBeforeDeadline = data?.data?.filter((datum: IntensityPeriod) =>
+  private getDateRange(data: IntensityData, duration: number, deadline: Date): IntensityPeriod {
+    // Filter periods starting after now and ending before deadline
+    const periods = data?.data?.filter((datum: IntensityPeriod) =>
       new Date(datum.to) < deadline && new Date(datum.from) > new Date()) ?? [];
 
-    let optimalAverageIntensity: number = Number.MAX_VALUE;
+    // Find the optimal period with the minimum average intensity
+    let minimumAverageIntensity: number = Number.MAX_VALUE;
     let optimalStart: string = new Date().toISOString();
-    let optimalIndex: IntensityIndex = periodsEndingBeforeDeadline[0]?.intensity.index ?? IntensityIndex.Moderate;
-    for (let periodStartIndex = 0; periodStartIndex <= periodsEndingBeforeDeadline.length - numberOfPeriods; periodStartIndex++) {
-        const periodEndIndex = periodStartIndex + numberOfPeriods;
-        const averageIntensity  = periodsEndingBeforeDeadline
+    let optimalIntensityIndex: IntensityIndex = periods[0]?.intensity.index ?? IntensityIndex.Moderate;
+    for (let periodStartIndex = 0; periodStartIndex <= periods.length - duration; periodStartIndex++) {
+        const periodEndIndex = periodStartIndex + duration;
+        const averageIntensity  = periods
           .slice(periodStartIndex, periodEndIndex)
-          .reduce((a: number, b: IntensityPeriod) => a + b.intensity.forecast, 0) / numberOfPeriods;
+          .reduce((a: number, b: IntensityPeriod) => a + b.intensity.forecast, 0) / duration;
 
-        if (averageIntensity < optimalAverageIntensity) {
-          optimalAverageIntensity = averageIntensity;
-          optimalStart = periodsEndingBeforeDeadline[periodStartIndex].from;
-          optimalIndex = periodsEndingBeforeDeadline[periodStartIndex].intensity.index;
+        if (averageIntensity < minimumAverageIntensity) {
+          minimumAverageIntensity = averageIntensity;
+          optimalStart = periods[periodStartIndex].from;
+          optimalIntensityIndex = periods[periodStartIndex].intensity.index;
         }
     }
 
     return {
       from: optimalStart,
-      to: new Date(new Date(optimalStart).getTime() + numberOfPeriods * this.periodDurationInMs).toISOString(),
+      to: new Date(new Date(optimalStart).getTime() + duration * this.periodDurationInMs).toISOString(),
       intensity: {
-        forecast: optimalAverageIntensity,
+        forecast: minimumAverageIntensity,
         actual: Number.NaN,
-        index: optimalIndex,
+        index: optimalIntensityIndex,
       },
     };
   }
