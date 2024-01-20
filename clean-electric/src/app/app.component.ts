@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { CarbonIntensityApiService } from './carbon-intensity-api.service';
+import { CarbonMinimizeService } from './carbon-minimize.service';
 
 @Component({
   selector: 'app-root',
@@ -15,9 +15,9 @@ export class AppComponent {
     '1 hour', '2 hours', '3 hours'
   ];
   durationMap = new Map<string, number>([
-    ['1 hour', 60],
-    ['2 hours', 120],
-    ['3 hours', 180],
+    ['1 hour', 2],
+    ['2 hours', 4],
+    ['3 hours', 6],
   ]);
   selectedDurationString: string;
   selectedDuration: number;
@@ -26,7 +26,7 @@ export class AppComponent {
   selectedEndTimeString: string;
   selectedEndTime: Date;
 
-  constructor(private carbonIntensityApiService: CarbonIntensityApiService) {
+  constructor(private carbonMinimizeService: CarbonMinimizeService) {
     this.selectedDurationString = this.durationOptions[0];
     this.selectedDuration = this.durationMap.get(this.selectedDurationString) ?? 60;
 
@@ -44,8 +44,8 @@ export class AppComponent {
   }
 
   private getPeriod(): void {
-    this.carbonIntensityApiService.getNationalForecast().subscribe((data) => {
-      console.log(data);
+    this.carbonMinimizeService.getPeriod(this.selectedDuration, this.selectedEndTime).subscribe((intensityPeriod) => {
+      console.log(intensityPeriod);
     });
   }
 }
