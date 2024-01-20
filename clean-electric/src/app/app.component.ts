@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
+import { CarbonIntensityApiService } from './carbon-intensity-api.service';
 
 @Component({
   selector: 'app-root',
@@ -9,7 +10,7 @@ import { FormControl } from '@angular/forms';
 export class AppComponent {
   title = 'clean-electric';
   
-  durationControl = new FormControl();
+  durationControl = new FormControl('', { validators: Validators.required });
   durationOptions: string[] = [
     '1 hour', '2 hours', '3 hours'
   ];
@@ -21,11 +22,11 @@ export class AppComponent {
   selectedDurationString: string;
   selectedDuration: number;
 
-  endTimeControl = new FormControl();
+  endTimeControl = new FormControl('', { validators: Validators.required });
   selectedEndTimeString: string;
   selectedEndTime: Date;
 
-  constructor() {
+  constructor(private carbonIntensityApiService: CarbonIntensityApiService) {
     this.selectedDurationString = this.durationOptions[0];
     this.selectedDuration = this.durationMap.get(this.selectedDurationString) ?? 60;
 
@@ -33,11 +34,18 @@ export class AppComponent {
     this.selectedEndTimeString = this.selectedEndTime.toISOString();
   }
 
-  onSelectedDurationChange() {
+  onSelectedDurationChange(): void {
     this.selectedDuration = this.durationMap.get(this.selectedDurationString) ?? 60;
   }
 
-  onSelectedEndTimeChange() {
+  onSelectedEndTimeChange(): void {
     this.selectedEndTime = new Date(Date.parse(this.selectedEndTimeString));
+    this.getPeriod();
+  }
+
+  private getPeriod(): void {
+    this.carbonIntensityApiService.getNationalForecast().subscribe((data) => {
+      console.log(data);
+    });
   }
 }
