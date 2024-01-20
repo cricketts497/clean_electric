@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { CarbonMinimizeService } from './carbon-minimize.service';
+import { IntensityPeriod } from './intensity-period';
+import { IntensityIndex } from './intensity-index';
 
 @Component({
   selector: 'app-root',
@@ -26,6 +28,16 @@ export class AppComponent {
   selectedDeadlineString: string;
   selectedDeadline: Date;
 
+  optimalIntensityPeriod: IntensityPeriod = {
+    from: '',
+    to: '',
+    intensity: {
+      forecast: 0,
+      actual: 0,
+      index: IntensityIndex.VeryLow
+    }
+  };
+
   constructor(private carbonMinimizeService: CarbonMinimizeService) {
     this.selectedDurationString = this.durationOptions[0];
     this.selectedDuration = this.durationMap.get(this.selectedDurationString) ?? 60;
@@ -36,6 +48,7 @@ export class AppComponent {
 
   onSelectedDurationChange(): void {
     this.selectedDuration = this.durationMap.get(this.selectedDurationString) ?? 60;
+    this.getPeriod();
   }
 
   onSelectedDeadlineChange(): void {
@@ -45,7 +58,7 @@ export class AppComponent {
 
   private getPeriod(): void {
     this.carbonMinimizeService.getPeriod(this.selectedDuration, this.selectedDeadline).subscribe((intensityPeriod) => {
-      console.log(intensityPeriod);
+      this.optimalIntensityPeriod = intensityPeriod;
     });
   }
 }

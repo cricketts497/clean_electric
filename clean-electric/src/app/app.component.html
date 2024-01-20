@@ -8,12 +8,17 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-      {{selectedDuration}}
 
       <h3>Before</h3>
       <mat-form-field appearance="fill">  
         <input matInput type="datetime-local" [(ngModel)]="selectedDeadlineString" (change)="onSelectedDeadlineChange()"/>
       </mat-form-field>
-      {{selectedDeadline}}
+  </mat-card-content>
+</mat-card>
+
+<mat-card>
+  <mat-card-title>Result</mat-card-title>
+  <mat-card-content>
+    Start usage at: {{optimalIntensityPeriod.from}}, finishing at {{optimalIntensityPeriod.to}}, the average carbon intensity is forecast to be {{optimalIntensityPeriod.intensity.index}} at {{optimalIntensityPeriod.intensity.forecast}} gCO<sub>2</sub>/kWh
   </mat-card-content>
 </mat-card>
