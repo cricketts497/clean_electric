@@ -10,17 +10,12 @@ import { IntensityIndex } from './intensity-index';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+  private maxPeriods = 24;
   title = 'clean-electric';
   
   durationControl = new FormControl('', { validators: Validators.required });
-  durationOptions: string[] = [
-    '1 hour', '2 hours', '3 hours'
-  ];
-  durationMap = new Map<string, number>([
-    ['1 hour', 2],
-    ['2 hours', 4],
-    ['3 hours', 6],
-  ]);
+  durationOptions: string[];
+  durationMap: Map<string, number>;
   selectedDurationString: string;
   selectedDuration: number;
 
@@ -39,6 +34,15 @@ export class AppComponent {
   };
 
   constructor(private carbonMinimizeService: CarbonMinimizeService) {
+    this.durationOptions = ['30 mins', '1 hour'];
+    this.durationMap = new Map<string, number>([['30 mins', 1], ['1 hour', 2]]);
+
+    for (let n = 3; n <= this.maxPeriods; n++) {
+      const durationString = `${n/2} hours`;
+      this.durationOptions.push(durationString);
+      this.durationMap = this.durationMap.set(durationString, n);
+    }
+
     this.selectedDurationString = this.durationOptions[0];
     this.selectedDuration = this.durationMap.get(this.selectedDurationString) ?? 60;
 
