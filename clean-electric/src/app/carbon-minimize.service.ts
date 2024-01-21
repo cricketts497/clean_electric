@@ -97,7 +97,7 @@ export class CarbonMinimizeService {
       from: new Date(optimalStart).toLocaleString(this.localeString),
       to: new Date(new Date(optimalStart).getTime() + duration * this.periodDurationInMs).toLocaleString(this.localeString),
       intensity: {
-        forecast: minimumAverageIntensity,
+        forecast: minimumAverageIntensity < Number.MAX_VALUE ? minimumAverageIntensity : 0,
         actual: Number.NaN,
         index: optimalIntensityIndex,
       },

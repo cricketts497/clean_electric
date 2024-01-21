@@ -25,7 +25,7 @@
   </mat-card-content>
 </mat-card>
 
-<mat-card class="main-card">
+<mat-card class="main-card" *ngIf="optimalIntensityPeriod?.intensity?.forecast ?? 0 > 0">
   <mat-card-title>Result</mat-card-title>
   <mat-card-content>
     Start usage at: <strong>{{optimalIntensityPeriod.from}}</strong>, finishing at <strong>{{optimalIntensityPeriod.to}}</strong>, the average carbon intensity is forecast to be <strong>{{optimalIntensityPeriod.intensity.index}}</strong> at <strong>{{optimalIntensityPeriod.intensity.forecast | number:'1.0-3'}} gCO<sub>2</sub>/kWh</strong>
