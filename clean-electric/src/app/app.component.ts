@@ -139,6 +139,15 @@ export class AppComponent {
     this.getPeriod();
   }
 
+  onClearTimeClick(): void {
+    this.selectedTimeStartString = '';
+    this.selectedTimeEndString = '';
+
+    this.carbonMinimizeService.setStart(0,0);
+    this.carbonMinimizeService.setEnd(0,0);
+    this.getPeriod();
+  }
+
   private getPeriod(): void {
     if (!this.deadlineControl.valid) {
       return;
