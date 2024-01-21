@@ -1,4 +1,5 @@
 export enum Region {
+  National = 0,
   NorthScotland = 1,
   SouthScotland = 2,
   NorthWestEngland = 3,

@@ -25,9 +25,34 @@
   </mat-card-content>
 </mat-card>
 
-<mat-card>
+<mat-card class="main-card">
   <mat-card-title>Result</mat-card-title>
   <mat-card-content>
     Start usage at: {{optimalIntensityPeriod.from}}, finishing at {{optimalIntensityPeriod.to}}, the average carbon intensity is forecast to be {{optimalIntensityPeriod.intensity.index}} at {{optimalIntensityPeriod.intensity.forecast | number:'1.0-3'}} gCO<sub>2</sub>/kWh
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="main-card">
+  <mat-card-content>
+    <mat-accordion>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Region
+          </mat-panel-title>
+          <mat-panel-description>
+            Select a UK region or use the national average
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+    
+        <mat-form-field appearance="fill">
+          <mat-select [(value)]="selectedRegionString" (selectionChange)="onSelectedRegionChange()">
+            <mat-option *ngFor="let region of regionOptions" [value]="region">
+              {{region}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </mat-expansion-panel>
+    </mat-accordion>
   </mat-card-content>
 </mat-card>

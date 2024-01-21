@@ -4,6 +4,8 @@ import { IntensityData } from './intensity-data';
 import { Observable, map } from 'rxjs';
 import { IntensityPeriod } from './intensity-period';
 import { IntensityIndex } from './intensity-index';
+import { Region } from './region';
+import { RegionalIntensityData } from './regional-intensity-data';
 
 @Injectable({
   providedIn: 'root'
@@ -16,8 +18,23 @@ export class CarbonMinimizeService {
 
   getPeriod(duration: number, deadline: Date): Observable<IntensityPeriod> {
     return this.carbonIntensityApiService.getNationalForecast().pipe(
-      map((data: IntensityData) => this.getDateRange(data, duration, deadline))
+      map((data: IntensityData) => this.getDateRange(data, duration, deadline)),
     );
+  }
+
+  getRegionalPeriod(duration: number, deadline: Date, region: Region): Observable<IntensityPeriod> {
+    return this.carbonIntensityApiService.getRegionalForecast(region).pipe(
+      map((data: RegionalIntensityData) => this.mapToIntensityData(data)),
+      map((data: IntensityData) => this.getDateRange(data, duration, deadline)),
+    );
+  }
+
+  private mapToIntensityData(regionalData: RegionalIntensityData): IntensityData {
+    const intensityData: IntensityData = {
+      data: regionalData.data.data,
+    };
+
+    return intensityData;
   }
 
   private getDateRange(data: IntensityData, duration: number, deadline: Date): IntensityPeriod {

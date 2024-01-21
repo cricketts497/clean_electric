@@ -3,6 +3,7 @@ import { AbstractControl, FormControl, ValidationErrors, ValidatorFn, Validators
 import { CarbonMinimizeService } from './carbon-minimize.service';
 import { IntensityPeriod } from './intensity-period';
 import { IntensityIndex } from './intensity-index';
+import { Region } from './region';
 
 function futureDateValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
@@ -27,6 +28,11 @@ export class AppComponent {
   selectedDeadline: Date;
   deadlineControl: FormControl;
 
+  regionOptions: string[];
+  regionMap: Map<string, Region>;
+  selectedRegionString: string;
+  selectedRegion: Region;
+
   optimalIntensityPeriod: IntensityPeriod = {
     from: '',
     to: '',
@@ -40,13 +46,11 @@ export class AppComponent {
   constructor(private carbonMinimizeService: CarbonMinimizeService) {
     this.durationOptions = ['30 mins', '1 hour'];
     this.durationMap = new Map<string, number>([['30 mins', 1], ['1 hour', 2]]);
-
     for (let n = 3; n <= this.maxPeriods; n++) {
       const durationString = `${n/2} hours`;
       this.durationOptions.push(durationString);
       this.durationMap = this.durationMap.set(durationString, n);
     }
-
     this.selectedDurationString = this.durationOptions[0];
     this.selectedDuration = this.durationMap.get(this.selectedDurationString) ?? 60;
 
@@ -55,6 +59,49 @@ export class AppComponent {
     this.deadlineControl = new FormControl(this.selectedDeadlineString, {
       validators: [Validators.required, futureDateValidator()],
     });
+
+    this.regionOptions = [
+      'National',
+      'North Scotland',
+      'South Scotland',
+      'North West England',
+      'North East England',
+      'Yorkshire',
+      'North Wales',
+      'South Wales',
+      'West Midlands',
+      'East Midlands',
+      'East England',
+      'South West England',
+      'South England',
+      'London',
+      'South East England',
+      'England',
+      'Scotland',
+      'Wales',
+    ];
+    this.regionMap = new Map<string, Region>([
+      ['National', Region.National],
+      ['North Scotland', Region.NorthScotland],
+      ['South Scotland', Region.SouthScotland],
+      ['North West England', Region.NorthWestEngland],
+      ['North East England', Region.NorthEastEngland],
+      ['Yorkshire', Region.Yorkshire],
+      ['North Wales', Region.NorthWales],
+      ['South Wales', Region.SouthWales],
+      ['West Midlands', Region.WestMidlands],
+      ['East Midlands', Region.EastMidlands],
+      ['East England', Region.EastEngland],
+      ['South West England', Region.SouthWestEngland],
+      ['South England', Region.SouthEngland],
+      ['London', Region.London],
+      ['South East England', Region.SouthEastEngland],
+      ['England', Region.England],
+      ['Scotland', Region.Scotland],
+      ['Wales', Region.Wales],
+    ]);
+    this.selectedRegionString = this.regionOptions[0];
+    this.selectedRegion = this.regionMap.get(this.selectedRegionString) ?? Region.National;
   }
 
   onSelectedDurationChange(): void {
@@ -67,13 +114,24 @@ export class AppComponent {
     this.getPeriod();
   }
 
+  onSelectedRegionChange(): void {
+    this.selectedRegion = this.regionMap.get(this.selectedRegionString) ?? Region.National;
+    this.getPeriod();
+  }
+
   private getPeriod(): void {
     if (!this.deadlineControl.valid) {
       return;
     }
 
-    this.carbonMinimizeService.getPeriod(this.selectedDuration, this.selectedDeadline).subscribe((intensityPeriod) => {
-      this.optimalIntensityPeriod = intensityPeriod;
-    });
+    if (this.selectedRegion === Region.National) {
+      this.carbonMinimizeService.getPeriod(this.selectedDuration, this.selectedDeadline).subscribe((intensityPeriod) => {
+        this.optimalIntensityPeriod = intensityPeriod;
+      });
+    } else {
+      this.carbonMinimizeService.getRegionalPeriod(this.selectedDuration, this.selectedDeadline, this.selectedRegion).subscribe((intensityPeriod) => {
+        this.optimalIntensityPeriod = intensityPeriod;
+      });
+    }
   }
 }
