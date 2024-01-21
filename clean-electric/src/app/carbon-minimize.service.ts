@@ -13,8 +13,15 @@ import { RegionalIntensityData } from './regional-intensity-data';
 export class CarbonMinimizeService {
   private periodDurationInMs: number = 30 * 60 * 1000;
   private localeString = 'en-GB';
+  private start: Date;
+  private end: Date;
 
-  constructor(private carbonIntensityApiService: CarbonIntensityApiService) { }
+  constructor(private carbonIntensityApiService: CarbonIntensityApiService) {
+    this.start = new Date();
+    this.end = new Date();
+    this.start.setHours(0,0);
+    this.end.setHours(0,0);
+  }
 
   getPeriod(duration: number, deadline: Date): Observable<IntensityPeriod> {
     return this.carbonIntensityApiService.getNationalForecast().pipe(
@@ -29,6 +36,14 @@ export class CarbonMinimizeService {
     );
   }
 
+  setStart(hours: number, minutes: number): void {
+    this.start.setHours(hours, minutes);
+  }
+
+  setEnd(hours: number, minutes: number): void {
+    this.end.setHours(hours, minutes);
+  }
+
   private mapToIntensityData(regionalData: RegionalIntensityData): IntensityData {
     const intensityData: IntensityData = {
       data: regionalData.data.data,
@@ -39,8 +54,20 @@ export class CarbonMinimizeService {
 
   private getDateRange(data: IntensityData, duration: number, deadline: Date): IntensityPeriod {
     // Filter periods starting after now and ending before deadline
-    const periods = data?.data?.filter((datum: IntensityPeriod) =>
+    let periods = data?.data?.filter((datum: IntensityPeriod) =>
       new Date(datum.to) < deadline && new Date(datum.from) > new Date()) ?? [];
+
+    if (this.start.getHours() !== this.end.getHours() || this.start.getMinutes() !== this.end.getMinutes()) {
+      periods = periods.filter((datum: IntensityPeriod) => {
+        const from = new Date(datum.from);
+        const to = new Date(datum.to);
+
+        return !(from.getHours() > this.end.getHours() ||
+          to.getHours() < this.start.getHours() ||
+          (from.getHours() === this.end.getHours() && from.getMinutes() >= this.end.getMinutes()) ||
+          (to.getHours() === this.start.getHours() && to.getMinutes() <= this.start.getMinutes()));
+      });
+    }
 
     // Find the optimal period with the minimum average intensity
     let minimumAverageIntensity: number = Number.MAX_VALUE;

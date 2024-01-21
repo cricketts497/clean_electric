@@ -33,6 +33,10 @@ export class AppComponent {
   selectedRegionString: string;
   selectedRegion: Region;
 
+  selectedTimeStartString: string;
+
+  selectedTimeEndString: string;
+
   optimalIntensityPeriod: IntensityPeriod = {
     from: '',
     to: '',
@@ -102,6 +106,10 @@ export class AppComponent {
     ]);
     this.selectedRegionString = this.regionOptions[0];
     this.selectedRegion = this.regionMap.get(this.selectedRegionString) ?? Region.National;
+
+    this.selectedTimeStartString = '';
+
+    this.selectedTimeEndString = '';
   }
 
   onSelectedDurationChange(): void {
@@ -116,6 +124,18 @@ export class AppComponent {
 
   onSelectedRegionChange(): void {
     this.selectedRegion = this.regionMap.get(this.selectedRegionString) ?? Region.National;
+    this.getPeriod();
+  }
+
+  onSelectedTimeStartChange(): void {
+    const hoursAndMinutes = this.selectedTimeStartString.split(':').map((digits) => parseInt(digits));
+    this.carbonMinimizeService.setStart(hoursAndMinutes[0], hoursAndMinutes[1]);
+    this.getPeriod();
+  }
+
+  onSelectedTimeEndChange(): void {
+    const hoursAndMinutes = this.selectedTimeEndString.split(':').map((digits) => parseInt(digits));
+    this.carbonMinimizeService.setEnd(hoursAndMinutes[0], hoursAndMinutes[1]);
     this.getPeriod();
   }
 

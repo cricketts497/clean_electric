@@ -44,13 +44,40 @@
             Select a UK region or use the national average
           </mat-panel-description>
         </mat-expansion-panel-header>
-    
         <mat-form-field appearance="fill">
           <mat-select [(value)]="selectedRegionString" (selectionChange)="onSelectedRegionChange()">
             <mat-option *ngFor="let region of regionOptions" [value]="region">
               {{region}}
             </mat-option>
           </mat-select>
+        </mat-form-field>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Filter
+          </mat-panel-title>
+          <mat-panel-description>
+            Select a time period to consider
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <mat-form-field appearance="fill">
+          <input
+            matInput
+            type="time"
+            [(ngModel)]="selectedTimeStartString"
+            (change)="onSelectedTimeStartChange()"
+          />
+        </mat-form-field>
+        -
+        <mat-form-field appearance="fill">
+          <input
+            matInput
+            type="time"
+            [(ngModel)]="selectedTimeEndString"
+            (change)="onSelectedTimeEndChange()"
+          />
         </mat-form-field>
       </mat-expansion-panel>
     </mat-accordion>
