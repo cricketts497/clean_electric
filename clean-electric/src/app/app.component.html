@@ -1,6 +1,6 @@
 <mat-card class="main-card">
   <mat-card-content>
-      <h4>Duration</h4>
+      <h4>I want to use grid electricity for</h4>
       <mat-form-field appearance="fill">
         <mat-select [(value)]="selectedDurationString" (selectionChange)="onSelectedDurationChange()">
           <mat-option *ngFor="let time of durationOptions" [value]="time">
@@ -9,7 +9,7 @@
         </mat-select>
       </mat-form-field>
 
-      <h4>Deadline</h4>
+      <h4>It needs to be finished by</h4>
       <mat-form-field appearance="fill">
         <input
           matInput
@@ -26,13 +26,23 @@
 </mat-card>
 
 <mat-card class="main-card" *ngIf="optimalIntensityPeriod?.intensity?.forecast ?? 0 > 0">
-  <mat-card-title>Result</mat-card-title>
+  <mat-card-header>
+    <mat-card-title>Result</mat-card-title>
+  </mat-card-header>
   <mat-card-content>
-    Start usage at: <strong>{{optimalIntensityPeriod.from}}</strong>, finishing at <strong>{{optimalIntensityPeriod.to}}</strong>, the average carbon intensity is forecast to be <strong>{{optimalIntensityPeriod.intensity.index}}</strong> at <strong>{{optimalIntensityPeriod.intensity.forecast | number:'1.0-3'}} gCO<sub>2</sub>/kWh</strong>
+    <p>
+      Start usage at: <strong>{{optimalIntensityPeriod.from}}</strong>, finishing at <strong>{{optimalIntensityPeriod.to}}</strong>
+    </p>
+    <p>
+      During this period, the average carbon intensity is forecast to be <strong>{{optimalIntensityPeriod.intensity.index}}</strong> at <strong>{{optimalIntensityPeriod.intensity.forecast | number:'1.0-3'}} gCO<sub>2</sub>/kWh</strong>
+    </p>
   </mat-card-content>
 </mat-card>
 
 <mat-card class="main-card">
+  <mat-card-header>
+    <mat-card-title>Filters</mat-card-title>
+  </mat-card-header>
   <mat-card-content>
     <mat-accordion>
       <mat-expansion-panel>
@@ -41,7 +51,7 @@
             Region
           </mat-panel-title>
           <mat-panel-description>
-            Select a UK region or use the national average
+            Select a UK region
           </mat-panel-description>
         </mat-expansion-panel-header>
         <mat-form-field appearance="fill">
@@ -56,7 +66,7 @@
       <mat-expansion-panel>
         <mat-expansion-panel-header>
           <mat-panel-title>
-            Filter
+            Time
           </mat-panel-title>
           <mat-panel-description>
             Select a time period to consider
