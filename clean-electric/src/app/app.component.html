@@ -1,6 +1,6 @@
 <mat-card class="main-card">
   <mat-card-content>
-      <h3>I want to use electric for</h3>
+      <h4>Duration</h4>
       <mat-form-field appearance="fill">
         <mat-select [(value)]="selectedDurationString" (selectionChange)="onSelectedDurationChange()">
           <mat-option *ngFor="let time of durationOptions" [value]="time">
@@ -9,8 +9,8 @@
         </mat-select>
       </mat-form-field>
 
-      <h3>Before</h3>
-      <mat-form-field appearance="fill">  
+      <h4>Deadline</h4>
+      <mat-form-field appearance="fill">
         <input matInput type="datetime-local" [(ngModel)]="selectedDeadlineString" (change)="onSelectedDeadlineChange()"/>
       </mat-form-field>
   </mat-card-content>
