@@ -37,11 +37,11 @@ export class CarbonMinimizeService {
   }
 
   setStart(hours: number, minutes: number): void {
-    this.start.setHours(hours, minutes);
+    this.start.setHours(hours, minutes, 0, 0);
   }
 
   setEnd(hours: number, minutes: number): void {
-    this.end.setHours(hours, minutes);
+    this.end.setHours(hours, minutes, 0, 0);
   }
 
   private mapToIntensityData(regionalData: RegionalIntensityData): IntensityData {
@@ -59,13 +59,20 @@ export class CarbonMinimizeService {
 
     if (this.start.getHours() !== this.end.getHours() || this.start.getMinutes() !== this.end.getMinutes()) {
       periods = periods.filter((datum: IntensityPeriod) => {
-        const from = new Date(datum.from);
-        const to = new Date(datum.to);
+        const f = new Date(datum.from);
+        const t = new Date(datum.to);
 
-        return !(from.getHours() > this.end.getHours() ||
-          to.getHours() < this.start.getHours() ||
-          (from.getHours() === this.end.getHours() && from.getMinutes() >= this.end.getMinutes()) ||
-          (to.getHours() === this.start.getHours() && to.getMinutes() <= this.start.getMinutes()));
+        if (f > t || this.start > this.end) {
+          return false;
+        }
+
+        const from = new Date(this.start);
+        from.setHours(f.getHours(), f.getMinutes(), 0, 0);
+
+        const to = new Date(this.end);
+        to.setHours(t.getHours(), t.getMinutes(), 0, 0);
+
+        return from <= to && from >= this.start && to <= this.end;
       });
     }
 
