@@ -28,6 +28,6 @@
 <mat-card>
   <mat-card-title>Result</mat-card-title>
   <mat-card-content>
-    Start usage at: {{optimalIntensityPeriod.from}}, finishing at {{optimalIntensityPeriod.to}}, the average carbon intensity is forecast to be {{optimalIntensityPeriod.intensity.index}} at {{optimalIntensityPeriod.intensity.forecast}} gCO<sub>2</sub>/kWh
+    Start usage at: {{optimalIntensityPeriod.from}}, finishing at {{optimalIntensityPeriod.to}}, the average carbon intensity is forecast to be {{optimalIntensityPeriod.intensity.index}} at {{optimalIntensityPeriod.intensity.forecast | number:'1.0-3'}} gCO<sub>2</sub>/kWh
   </mat-card-content>
 </mat-card>

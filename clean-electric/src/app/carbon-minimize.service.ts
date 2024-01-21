@@ -10,6 +10,7 @@ import { IntensityIndex } from './intensity-index';
 })
 export class CarbonMinimizeService {
   private periodDurationInMs: number = 30 * 60 * 1000;
+  private localeString = 'en-GB';
 
   constructor(private carbonIntensityApiService: CarbonIntensityApiService) { }
 
@@ -42,8 +43,8 @@ export class CarbonMinimizeService {
     }
 
     return {
-      from: optimalStart,
-      to: new Date(new Date(optimalStart).getTime() + duration * this.periodDurationInMs).toISOString(),
+      from: new Date(optimalStart).toLocaleString(this.localeString),
+      to: new Date(new Date(optimalStart).getTime() + duration * this.periodDurationInMs).toLocaleString(this.localeString),
       intensity: {
         forecast: minimumAverageIntensity,
         actual: Number.NaN,
