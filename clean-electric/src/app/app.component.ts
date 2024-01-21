@@ -1,8 +1,14 @@
 import { Component } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { CarbonMinimizeService } from './carbon-minimize.service';
 import { IntensityPeriod } from './intensity-period';
 import { IntensityIndex } from './intensity-index';
+
+function futureDateValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    return (new Date(control.value) < new Date()) ? { futureDate: { value: control.value }} : null;
+  }
+}
 
 @Component({
   selector: 'app-root',
@@ -11,17 +17,15 @@ import { IntensityIndex } from './intensity-index';
 })
 export class AppComponent {
   private maxPeriods = 24;
-  title = 'clean-electric';
-  
-  durationControl = new FormControl('', { validators: Validators.required });
+
   durationOptions: string[];
   durationMap: Map<string, number>;
   selectedDurationString: string;
   selectedDuration: number;
 
-  endTimeControl = new FormControl('', { validators: Validators.required });
   selectedDeadlineString: string;
   selectedDeadline: Date;
+  deadlineControl: FormControl;
 
   optimalIntensityPeriod: IntensityPeriod = {
     from: '',
@@ -48,6 +52,9 @@ export class AppComponent {
 
     this.selectedDeadline = new Date();
     this.selectedDeadlineString = this.selectedDeadline.toISOString();
+    this.deadlineControl = new FormControl(this.selectedDeadlineString, {
+      validators: [Validators.required, futureDateValidator()],
+    });
   }
 
   onSelectedDurationChange(): void {
@@ -61,6 +68,10 @@ export class AppComponent {
   }
 
   private getPeriod(): void {
+    if (!this.deadlineControl.valid) {
+      return;
+    }
+
     this.carbonMinimizeService.getPeriod(this.selectedDuration, this.selectedDeadline).subscribe((intensityPeriod) => {
       this.optimalIntensityPeriod = intensityPeriod;
     });

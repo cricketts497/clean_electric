@@ -11,7 +11,13 @@
 
       <h4>Deadline</h4>
       <mat-form-field appearance="fill">
-        <input matInput type="datetime-local" [(ngModel)]="selectedDeadlineString" (change)="onSelectedDeadlineChange()"/>
+        <input
+          matInput
+          type="datetime-local"
+          [formControl]="deadlineControl"
+          [(ngModel)]="selectedDeadlineString"
+          (change)="onSelectedDeadlineChange()"
+        />
       </mat-form-field>
   </mat-card-content>
 </mat-card>
