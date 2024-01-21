@@ -18,6 +18,9 @@
           [(ngModel)]="selectedDeadlineString"
           (change)="onSelectedDeadlineChange()"
         />
+        <mat-error *ngIf="deadlineControl.hasError('futureDate')">
+          The deadline must be in the future
+        </mat-error>
       </mat-form-field>
   </mat-card-content>
 </mat-card>
