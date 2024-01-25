@@ -76,12 +76,19 @@ export class CarbonMinimizeService {
       });
     }
 
+    console.log(periods);
+
     // Find the optimal period with the minimum average intensity
     let minimumAverageIntensity: number = Number.MAX_VALUE;
     let optimalStart: string = new Date().toISOString();
     let optimalIntensityIndex: IntensityIndex = periods[0]?.intensity.index ?? IntensityIndex.Moderate;
     for (let periodStartIndex = 0; periodStartIndex <= periods.length - duration; periodStartIndex++) {
         const periodEndIndex = periodStartIndex + duration;
+        if (new Date(periods[periodEndIndex - 1].to) > new Date(new Date(periods[periodStartIndex].from).getTime() + duration * this.periodDurationInMs))
+        {
+          continue;
+        }
+
         const averageIntensity  = periods
           .slice(periodStartIndex, periodEndIndex)
           .reduce((a: number, b: IntensityPeriod) => a + b.intensity.forecast, 0) / duration;
