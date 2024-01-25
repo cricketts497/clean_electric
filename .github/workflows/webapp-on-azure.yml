@@ -26,6 +26,7 @@ jobs:
       with:
         node-version: ${{ env.NODE_VERSION }}
     - name: npm install and build
+      working-directory: ./clean-electric
       run: |
         npm install
         npm run build -- --prod
