@@ -31,9 +31,9 @@ jobs:
         npm install
         npm run build
     - name: 'Deploy to Azure WebApp'
-      working-directory: ./clean-electric
       uses: azure/webapps-deploy@v1
       with: 
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
         package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+      working-directory: ./clean-electric
