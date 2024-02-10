@@ -1,7 +1,7 @@
 import { Intensity } from "./intensity";
 
 export interface IntensityPeriod {
-  from: string;
-  to: string;
+  from: Date,
+  to: Date,
   intensity: Intensity;
 }
