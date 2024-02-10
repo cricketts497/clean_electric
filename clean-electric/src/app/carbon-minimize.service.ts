@@ -1,18 +1,19 @@
 import { Injectable } from '@angular/core';
 import { CarbonIntensityApiService } from './carbon-intensity-api.service';
-import { IntensityData } from './intensity-data';
+import { IntensityDataDto } from './intensity-data-dto';
 import { Observable, map } from 'rxjs';
-import { IntensityPeriod } from './intensity-period';
+import { IntensityPeriodDto } from './intensity-period-dto';
 import { IntensityIndex } from './intensity-index';
 import { Region } from './region';
-import { RegionalIntensityData } from './regional-intensity-data';
+import { RegionalIntensityDataDto } from './regional-intensity-data-dto';
+import { IntensityData } from './intensity-data';
+import { IntensityPeriod } from './intensity-period';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CarbonMinimizeService {
   private periodDurationInMs: number = 30 * 60 * 1000;
-  private localeString = 'en-GB';
   private start: Date;
   private end: Date;
 
@@ -25,13 +26,15 @@ export class CarbonMinimizeService {
 
   getPeriod(duration: number, deadline: Date): Observable<IntensityPeriod> {
     return this.carbonIntensityApiService.getNationalForecast().pipe(
+      map((data: IntensityDataDto) => this.mapIntensityDataType(data)),
       map((data: IntensityData) => this.getDateRange(data, duration, deadline)),
     );
   }
 
   getRegionalPeriod(duration: number, deadline: Date, region: Region): Observable<IntensityPeriod> {
     return this.carbonIntensityApiService.getRegionalForecast(region).pipe(
-      map((data: RegionalIntensityData) => this.mapToIntensityData(data)),
+      map((data: RegionalIntensityDataDto) => this.mapToIntensityData(data)),
+      map((data: IntensityDataDto) => this.mapIntensityDataType(data)),
       map((data: IntensityData) => this.getDateRange(data, duration, deadline)),
     );
   }
@@ -44,33 +47,42 @@ export class CarbonMinimizeService {
     this.end.setHours(hours, minutes, 0, 0);
   }
 
-  private mapToIntensityData(regionalData: RegionalIntensityData): IntensityData {
-    const intensityData: IntensityData = {
+  private mapToIntensityData(regionalData: RegionalIntensityDataDto): IntensityDataDto {
+    const intensityData: IntensityDataDto = {
       data: regionalData.data.data,
     };
 
     return intensityData;
   }
 
+  private mapIntensityDataType(intensityDataDto: IntensityDataDto): IntensityData {
+    return {
+      data: intensityDataDto.data.map((datum: IntensityPeriodDto): IntensityPeriod => {
+        return {
+          from: new Date(datum.from),
+          to: new Date(datum.to),
+          intensity: datum.intensity,
+        };
+      }),
+    };
+  }
+
   private getDateRange(data: IntensityData, duration: number, deadline: Date): IntensityPeriod {
     // Filter periods starting after now and ending before deadline
-    let periods = data?.data?.filter((datum: IntensityPeriod) =>
-      new Date(datum.to) < deadline && new Date(datum.from) > new Date()) ?? [];
+    let periods = data?.data?.filter((datum: IntensityPeriod): boolean =>
+      datum.to < deadline && datum.from > new Date()) ?? [];
 
     if (this.start.getHours() !== this.end.getHours() || this.start.getMinutes() !== this.end.getMinutes()) {
-      periods = periods.filter((datum: IntensityPeriod) => {
-        const f = new Date(datum.from);
-        const t = new Date(datum.to);
-
-        if (f > t || this.start > this.end) {
+      periods = periods.filter((datum: IntensityPeriod): boolean => {
+        if (datum.from > datum.to || this.start > this.end) {
           return false;
         }
 
         const from = new Date(this.start);
-        from.setHours(f.getHours(), f.getMinutes(), 0, 0);
+        from.setHours(datum.from.getHours(), datum.from.getMinutes(), 0, 0);
 
         const to = new Date(this.end);
-        to.setHours(t.getHours(), t.getMinutes(), 0, 0);
+        to.setHours(datum.to.getHours(), datum.to.getMinutes(), 0, 0);
 
         return from <= to && from >= this.start && to <= this.end;
       });
@@ -80,11 +92,11 @@ export class CarbonMinimizeService {
 
     // Find the optimal period with the minimum average intensity
     let minimumAverageIntensity: number = Number.MAX_VALUE;
-    let optimalStart: string = new Date().toISOString();
+    let optimalStart: Date = new Date();
     let optimalIntensityIndex: IntensityIndex = periods[0]?.intensity.index ?? IntensityIndex.Moderate;
     for (let periodStartIndex = 0; periodStartIndex <= periods.length - duration; periodStartIndex++) {
         const periodEndIndex = periodStartIndex + duration;
-        if (new Date(periods[periodEndIndex - 1].to) > new Date(new Date(periods[periodStartIndex].from).getTime() + duration * this.periodDurationInMs))
+        if (periods[periodEndIndex - 1].to > new Date(periods[periodStartIndex].from.getTime() + duration * this.periodDurationInMs))
         {
           continue;
         }
@@ -101,8 +113,8 @@ export class CarbonMinimizeService {
     }
 
     return {
-      from: new Date(optimalStart).toLocaleString(this.localeString),
-      to: new Date(new Date(optimalStart).getTime() + duration * this.periodDurationInMs).toLocaleString(this.localeString),
+      from: optimalStart,
+      to: new Date(new Date(optimalStart).getTime() + duration * this.periodDurationInMs),
       intensity: {
         forecast: minimumAverageIntensity < Number.MAX_VALUE ? minimumAverageIntensity : 0,
         actual: Number.NaN,

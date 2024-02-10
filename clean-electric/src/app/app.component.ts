@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { AbstractControl, FormControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { CarbonMinimizeService } from './carbon-minimize.service';
-import { IntensityPeriod } from './intensity-period';
 import { IntensityIndex } from './intensity-index';
 import { Region } from './region';
+import { IntensityPeriod } from './intensity-period';
 
 function futureDateValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
@@ -18,6 +18,8 @@ function futureDateValidator(): ValidatorFn {
 })
 export class AppComponent {
   private maxPeriods = 24;
+
+  datetimeFormat: string = 'dd/MM HH:mm';
 
   durationOptions: string[];
   durationMap: Map<string, number>;
@@ -38,8 +40,8 @@ export class AppComponent {
   selectedTimeEndString: string;
 
   optimalIntensityPeriod: IntensityPeriod = {
-    from: '',
-    to: '',
+    from: new Date(),
+    to: new Date(),
     intensity: {
       forecast: 0,
       actual: 0,
@@ -154,11 +156,11 @@ export class AppComponent {
     }
 
     if (this.selectedRegion === Region.National) {
-      this.carbonMinimizeService.getPeriod(this.selectedDuration, this.selectedDeadline).subscribe((intensityPeriod) => {
+      this.carbonMinimizeService.getPeriod(this.selectedDuration, this.selectedDeadline).subscribe((intensityPeriod: IntensityPeriod) => {
         this.optimalIntensityPeriod = intensityPeriod;
       });
     } else {
-      this.carbonMinimizeService.getRegionalPeriod(this.selectedDuration, this.selectedDeadline, this.selectedRegion).subscribe((intensityPeriod) => {
+      this.carbonMinimizeService.getRegionalPeriod(this.selectedDuration, this.selectedDeadline, this.selectedRegion).subscribe((intensityPeriod: IntensityPeriod) => {
         this.optimalIntensityPeriod = intensityPeriod;
       });
     }

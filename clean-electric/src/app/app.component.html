@@ -31,7 +31,7 @@
   </mat-card-header>
   <mat-card-content>
     <p>
-      Start usage at: <strong>{{optimalIntensityPeriod.from}}</strong>, finishing at <strong>{{optimalIntensityPeriod.to}}</strong>
+      Start usage at <strong>{{ optimalIntensityPeriod.from | date:datetimeFormat }}</strong>, finishing at <strong>{{ optimalIntensityPeriod.to | date:datetimeFormat }}</strong>
     </p>
     <p>
       During this period, the average carbon intensity is forecast to be <strong>{{optimalIntensityPeriod.intensity.index}}</strong> at <strong>{{optimalIntensityPeriod.intensity.forecast | number:'1.0-3'}} gCO<sub>2</sub>/kWh</strong>
