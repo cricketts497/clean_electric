@@ -8,12 +8,12 @@ import { Region } from './region';
 import { RegionalIntensityDataDto } from './regional-intensity-data-dto';
 import { IntensityData } from './intensity-data';
 import { IntensityPeriod } from './intensity-period';
+import { Constants } from './constants';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CarbonMinimizeService {
-  private periodDurationInMs: number = 30 * 60 * 1000;
   private start: Date;
   private end: Date;
 
@@ -96,7 +96,7 @@ export class CarbonMinimizeService {
     let optimalIntensityIndex: IntensityIndex = periods[0]?.intensity.index ?? IntensityIndex.Moderate;
     for (let periodStartIndex = 0; periodStartIndex <= periods.length - duration; periodStartIndex++) {
         const periodEndIndex = periodStartIndex + duration;
-        if (periods[periodEndIndex - 1].to > new Date(periods[periodStartIndex].from.getTime() + duration * this.periodDurationInMs))
+        if (periods[periodEndIndex - 1].to > new Date(periods[periodStartIndex].from.getTime() + duration * Constants.PeriodDurationInMs))
         {
           continue;
         }
@@ -114,7 +114,7 @@ export class CarbonMinimizeService {
 
     return {
       from: optimalStart,
-      to: new Date(new Date(optimalStart).getTime() + duration * this.periodDurationInMs),
+      to: new Date(new Date(optimalStart).getTime() + duration * Constants.PeriodDurationInMs),
       intensity: {
         forecast: minimumAverageIntensity < Number.MAX_VALUE ? minimumAverageIntensity : 0,
         actual: Number.NaN,
