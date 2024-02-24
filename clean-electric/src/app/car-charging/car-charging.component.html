@@ -1,0 +1,30 @@
+<h4>Battery capacity / kWh</h4>
+<mat-form-field appearance="fill">
+  <input
+    matInput
+    type="number"
+    [formControl]="capacityControl"
+    [(ngModel)]="capacity"
+    (change)="onCapacityChange()"
+  />
+  <mat-error *ngIf="capacityControl.hasError('min')">
+    Must be greater than or equal to 1
+  </mat-error>
+</mat-form-field>
+
+<h4>Current state of charge / %</h4>
+<mat-form-field appearance="fill">
+  <input
+    matInput
+    type="number"
+    [formControl]="socControl"
+    [(ngModel)]="soc"
+    (change)="onSocChange()"
+  />
+  <mat-error *ngIf="socControl.hasError('min')">
+    Must be greater than or equal to 0
+  </mat-error>
+  <mat-error *ngIf="socControl.hasError('max')">
+    Must be less than or equal to 100
+  </mat-error>
+</mat-form-field>

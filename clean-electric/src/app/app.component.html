@@ -7,6 +7,12 @@
           (selectedDeadlineEmitter)="onSelectedDeadlineChange($event)"
         ></app-usage-duration-tab>
       </mat-tab>
+      <mat-tab label="Car Charging">
+        <app-car-charging
+          (selectedDurationEmitter)="onSelectedDurationChange($event)"
+          (selectedDeadlineEmitter)="onSelectedDeadlineChange($event)"
+        ></app-car-charging>
+      </mat-tab>
     </mat-tab-group>
   </mat-card-content>
 </mat-card>

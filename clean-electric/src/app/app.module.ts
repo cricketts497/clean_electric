@@ -12,11 +12,13 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatButtonModule } from '@angular/material/button';
 import { UsageDurationTabComponent } from './usage-duration-tab/usage-duration-tab.component';
 import { MatTabsModule } from '@angular/material/tabs';
+import { CarChargingComponent } from './car-charging/car-charging.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    UsageDurationTabComponent
+    UsageDurationTabComponent,
+    CarChargingComponent
   ],
   imports: [
     BrowserModule,
