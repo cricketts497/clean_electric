@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
 import { CarbonMinimizeService } from './carbon-minimize.service';
 import { IntensityIndex } from './intensity-index';
 import { Region } from './region';
@@ -11,7 +10,7 @@ import { IntensityPeriod } from './intensity-period';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  datetimeFormat: string = 'dd/MM HH:mm';
+  datetimeFormat: string = 'EEE dd/MM HH:mm';
 
   selectedDuration: number = 2;
   selectedDeadline: Date = new Date();
