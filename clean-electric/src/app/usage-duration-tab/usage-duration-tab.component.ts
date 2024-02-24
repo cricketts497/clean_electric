@@ -1,14 +1,6 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { AbstractControl, FormControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { Constants } from '../constants';
-
-function futureDateValidator(selectedDuration: number): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    return (new Date(control.value) < new Date(new Date().getTime() + selectedDuration * Constants.PeriodDurationInMs))
-      ? { futureDate: { value: control.value }}
-      : null;
-  }
-}
+import { FormControl, Validators } from '@angular/forms';
+import { futureDateValidator } from '../validators';
 
 @Component({
   selector: 'app-usage-duration-tab',
@@ -39,14 +31,12 @@ export class UsageDurationTabComponent {
     }
     this.selectedDurationString = this.durationOptions[0];
     this.selectedDuration = this.durationMap.get(this.selectedDurationString) ?? 2;
-    this.selectedDurationEmitter.emit(this.selectedDuration);
 
     this.selectedDeadline = new Date();
     this.selectedDeadlineString = this.selectedDeadline.toISOString();
     this.deadlineControl = new FormControl(this.selectedDeadlineString, {
       validators: [Validators.required, futureDateValidator(this.selectedDuration)],
     });
-    this.selectedDeadlineEmitter.emit(this.selectedDeadline);
   }
 
   onSelectedDurationChange(): void {

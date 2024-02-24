@@ -1,5 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
+import { futureDateValidator } from '../validators';
+import { Constants } from '../constants';
 
 @Component({
   selector: 'app-car-charging',
@@ -12,6 +14,10 @@ export class CarChargingComponent {
 
   soc: number;
   socControl: FormControl;
+
+  selectedDeadlineString: string;
+  selectedDeadline: Date;
+  deadlineControl: FormControl;
 
   @Output() selectedDurationEmitter = new EventEmitter<number>();
   @Output() selectedDeadlineEmitter = new EventEmitter<Date>();
@@ -26,11 +32,39 @@ export class CarChargingComponent {
     this.socControl = new FormControl(this.soc, {
       validators: [Validators.min(0), Validators.max(100)],
     });
+
+    this.selectedDeadline = new Date();
+    this.selectedDeadlineString = this.selectedDeadline.toISOString();
+    this.deadlineControl = new FormControl(this.selectedDeadlineString, {
+      validators: [Validators.required, futureDateValidator(0)],
+    });
   }
 
-  onCapacityChange(): void {
+  onValueChange(): void {
+    if (!this.capacityControl.valid || !this.socControl.valid || !this.deadlineControl.valid) {
+      return;
+    }
+
+    this.setDuration();
   }
 
-  onSocChange(): void {
+  onSelectedDeadlineChange(): void {
+    if (!this.capacityControl.valid || !this.socControl.valid || !this.deadlineControl.valid) {
+      return;
+    }
+
+    this.selectedDeadline = new Date(Date.parse(this.selectedDeadlineString));
+    this.selectedDeadlineEmitter.emit(this.selectedDeadline);
+  }
+
+  private setDuration(): void {
+    const energyRequiredInkWh = (100.0 - this.soc) * this.capacity / 100.0;
+    const duration = Math.ceil((energyRequiredInkWh / Constants.ChargingPowerInkW) * 2);
+
+    this.deadlineControl = new FormControl(this.selectedDeadlineString, {
+      validators: [Validators.required, futureDateValidator(duration)],
+    });
+
+    this.selectedDurationEmitter.emit(duration);
   }
 }
