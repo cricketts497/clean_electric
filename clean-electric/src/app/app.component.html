@@ -1,27 +1,19 @@
 <mat-card class="main-card">
   <mat-card-content>
-      <h4>I want to use grid electricity for</h4>
-      <mat-form-field appearance="fill">
-        <mat-select [(value)]="selectedDurationString" (selectionChange)="onSelectedDurationChange()">
-          <mat-option *ngFor="let time of durationOptions" [value]="time">
-            {{time}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <h4>It needs to be finished by</h4>
-      <mat-form-field appearance="fill">
-        <input
-          matInput
-          type="datetime-local"
-          [formControl]="deadlineControl"
-          [(ngModel)]="selectedDeadlineString"
-          (change)="onSelectedDeadlineChange()"
-        />
-        <mat-error *ngIf="deadlineControl.hasError('futureDate')">
-          The deadline must be in the future
-        </mat-error>
-      </mat-form-field>
+    <mat-tab-group>
+      <mat-tab label="Duration">
+        <app-usage-duration-tab
+          (selectedDurationEmitter)="onSelectedDurationChange($event)"
+          (selectedDeadlineEmitter)="onSelectedDeadlineChange($event)"
+        ></app-usage-duration-tab>
+      </mat-tab>
+      <mat-tab label="Car Charging">
+        <app-car-charging
+          (selectedDurationEmitter)="onSelectedDurationChange($event)"
+          (selectedDeadlineEmitter)="onSelectedDeadlineChange($event)"
+        ></app-car-charging>
+      </mat-tab>
+    </mat-tab-group>
   </mat-card-content>
 </mat-card>
 

@@ -1,0 +1,45 @@
+<h4>Battery capacity / kWh</h4>
+<mat-form-field appearance="fill">
+  <input
+    matInput
+    type="number"
+    [formControl]="capacityControl"
+    [(ngModel)]="capacity"
+    (change)="onValueChange()"
+  />
+  <mat-error *ngIf="capacityControl.hasError('min')">
+    Must be greater than or equal to 1
+  </mat-error>
+</mat-form-field>
+
+<h4>Current state of charge / %</h4>
+<mat-form-field appearance="fill">
+  <input
+    matInput
+    type="number"
+    [formControl]="socControl"
+    [(ngModel)]="soc"
+    (change)="onValueChange()"
+  />
+  <mat-error *ngIf="socControl.hasError('min')">
+    Must be greater than or equal to 0
+  </mat-error>
+  <mat-error *ngIf="socControl.hasError('max')">
+    Must be less than or equal to 100
+  </mat-error>
+</mat-form-field>
+
+
+<h4>It needs to be fully charged by</h4>
+<mat-form-field appearance="fill">
+  <input
+    matInput
+    type="datetime-local"
+    [formControl]="deadlineControl"
+    [(ngModel)]="selectedDeadlineString"
+    (change)="onSelectedDeadlineChange()"
+  />
+  <mat-error *ngIf="deadlineControl.hasError('futureDate')">
+    The deadline must be in the future
+  </mat-error>
+</mat-form-field>

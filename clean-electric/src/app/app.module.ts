@@ -10,10 +10,15 @@ import { MatInputModule } from '@angular/material/input';
 import { HttpClientModule } from '@angular/common/http';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatButtonModule } from '@angular/material/button';
+import { UsageDurationTabComponent } from './usage-duration-tab/usage-duration-tab.component';
+import { MatTabsModule } from '@angular/material/tabs';
+import { CarChargingComponent } from './car-charging/car-charging.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    UsageDurationTabComponent,
+    CarChargingComponent
   ],
   imports: [
     BrowserModule,
@@ -27,6 +32,7 @@ import { MatButtonModule } from '@angular/material/button';
     HttpClientModule,
     MatExpansionModule,
     MatButtonModule,
+    MatTabsModule,
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'en-GB' },
