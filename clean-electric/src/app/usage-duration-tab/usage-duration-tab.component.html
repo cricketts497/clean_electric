@@ -1,0 +1,22 @@
+<h4>I want to use grid electricity for</h4>
+<mat-form-field appearance="fill">
+  <mat-select [(value)]="selectedDurationString" (selectionChange)="onSelectedDurationChange()">
+    <mat-option *ngFor="let time of durationOptions" [value]="time">
+      {{time}}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
+<h4>It needs to be finished by</h4>
+<mat-form-field appearance="fill">
+  <input
+    matInput
+    type="datetime-local"
+    [formControl]="deadlineControl"
+    [(ngModel)]="selectedDeadlineString"
+    (change)="onSelectedDeadlineChange()"
+  />
+  <mat-error *ngIf="deadlineControl.hasError('futureDate')">
+    The deadline must be in the future
+  </mat-error>
+</mat-form-field>

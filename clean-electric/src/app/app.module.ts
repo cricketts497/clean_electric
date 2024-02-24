@@ -10,10 +10,12 @@ import { MatInputModule } from '@angular/material/input';
 import { HttpClientModule } from '@angular/common/http';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatButtonModule } from '@angular/material/button';
+import { UsageDurationTabComponent } from './usage-duration-tab/usage-duration-tab.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    UsageDurationTabComponent
   ],
   imports: [
     BrowserModule,
