@@ -4,10 +4,13 @@ import { CarbonMinimizeService } from './carbon-minimize.service';
 import { IntensityIndex } from './intensity-index';
 import { Region } from './region';
 import { IntensityPeriod } from './intensity-period';
+import { Constants } from './constants';
 
-function futureDateValidator(): ValidatorFn {
+function futureDateValidator(selectedDuration: number): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
-    return (new Date(control.value) < new Date()) ? { futureDate: { value: control.value }} : null;
+    return (new Date(control.value) < new Date(new Date().getTime() + selectedDuration * Constants.PeriodDurationInMs))
+      ? { futureDate: { value: control.value }}
+      : null;
   }
 }
 
@@ -58,12 +61,12 @@ export class AppComponent {
       this.durationMap = this.durationMap.set(durationString, n);
     }
     this.selectedDurationString = this.durationOptions[0];
-    this.selectedDuration = this.durationMap.get(this.selectedDurationString) ?? 60;
+    this.selectedDuration = this.durationMap.get(this.selectedDurationString) ?? 2;
 
     this.selectedDeadline = new Date();
     this.selectedDeadlineString = this.selectedDeadline.toISOString();
     this.deadlineControl = new FormControl(this.selectedDeadlineString, {
-      validators: [Validators.required, futureDateValidator()],
+      validators: [Validators.required, futureDateValidator(this.selectedDuration)],
     });
 
     this.regionOptions = [
@@ -115,7 +118,10 @@ export class AppComponent {
   }
 
   onSelectedDurationChange(): void {
-    this.selectedDuration = this.durationMap.get(this.selectedDurationString) ?? 60;
+    this.selectedDuration = this.durationMap.get(this.selectedDurationString) ?? 2;
+    this.deadlineControl = new FormControl(this.selectedDeadlineString, {
+      validators: [Validators.required, futureDateValidator(this.selectedDuration)],
+    });
     this.getPeriod();
   }
 
