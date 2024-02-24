@@ -1,9 +1,13 @@
 <mat-card class="main-card">
   <mat-card-content>
-      <app-usage-duration-tab
-        (selectedDurationEmitter)="onSelectedDurationChange($event)"
-        (selectedDeadlineEmitter)="onSelectedDeadlineChange($event)"
-      ></app-usage-duration-tab>
+    <mat-tab-group>
+      <mat-tab label="Duration">
+        <app-usage-duration-tab
+          (selectedDurationEmitter)="onSelectedDurationChange($event)"
+          (selectedDeadlineEmitter)="onSelectedDeadlineChange($event)"
+        ></app-usage-duration-tab>
+      </mat-tab>
+    </mat-tab-group>
   </mat-card-content>
 </mat-card>
 

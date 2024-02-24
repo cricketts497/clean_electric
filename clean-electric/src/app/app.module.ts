@@ -11,6 +11,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatButtonModule } from '@angular/material/button';
 import { UsageDurationTabComponent } from './usage-duration-tab/usage-duration-tab.component';
+import { MatTabsModule } from '@angular/material/tabs';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { UsageDurationTabComponent } from './usage-duration-tab/usage-duration-t
     HttpClientModule,
     MatExpansionModule,
     MatButtonModule,
+    MatTabsModule,
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'en-GB' },
